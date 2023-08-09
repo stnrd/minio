@@ -34,6 +34,7 @@ type Config struct {
 	PostgreSQL    map[string]target.PostgreSQLArgs    `json:"postgresql"`
 	Redis         map[string]target.RedisArgs         `json:"redis"`
 	Webhook       map[string]target.WebhookArgs       `json:"webhook"`
+	Temporal      map[string]target.TemporalArgs      `json:"temporal"`
 }
 
 const (
@@ -54,6 +55,7 @@ func NewConfig() Config {
 		Webhook:       make(map[string]target.WebhookArgs),
 		PostgreSQL:    make(map[string]target.PostgreSQLArgs),
 		Elasticsearch: make(map[string]target.ElasticsearchArgs),
+		Temporal:      make(map[string]target.TemporalArgs),
 	}
 	cfg.NSQ[defaultTarget] = target.NSQArgs{}
 	cfg.AMQP[defaultTarget] = target.AMQPArgs{}
@@ -65,5 +67,6 @@ func NewConfig() Config {
 	cfg.Webhook[defaultTarget] = target.WebhookArgs{}
 	cfg.PostgreSQL[defaultTarget] = target.PostgreSQLArgs{}
 	cfg.Elasticsearch[defaultTarget] = target.ElasticsearchArgs{}
+	cfg.Temporal[defaultTarget] = target.TemporalArgs{}
 	return cfg
 }

@@ -681,4 +681,90 @@ var (
 			Type:        "sentence",
 		},
 	}
+
+	HelpTemporal = config.HelpKVS{
+		config.HelpKV{
+			Key:         target.TemporalAddress,
+			Description: "Temporals server's address. For example: `localhost:7233`",
+			Type:        "address",
+			Sensitive:   true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalPassword,
+			Description: "Temporal server password",
+			Optional:    true,
+			Type:        "string",
+			Sensitive:   true,
+			Secret:      true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalNamespace,
+			Description: "Temporal namespace to store events, for example: `default`",
+			Type:        "string",
+			Optional:    true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalTaskQueue,
+			Description: "Temporal task queue to store events",
+			Type:        "string",
+			Sensitive:   true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalWorkflow,
+			Description: "Temporal workflow that will be executed, workflow ids are auto-created",
+			Type:        "string",
+			Sensitive:   true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalTLS,
+			Description: "set to 'on' to enable TLS",
+			Optional:    true,
+			Type:        "on|off",
+		},
+		config.HelpKV{
+			Key:         target.TemporalTLSSkipVerify,
+			Description: `trust server TLS without verification, defaults to "on" (verify)`,
+			Optional:    true,
+			Type:        "on|off",
+		},
+		config.HelpKV{
+			Key:         target.TemporalCertAuthority,
+			Description: "path to certificate chain of the target Temporal server",
+			Optional:    true,
+			Type:        "string",
+			Sensitive:   true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalClientCert,
+			Description: "client cert for Temporal mTLS auth",
+			Optional:    true,
+			Type:        "string",
+			Sensitive:   true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalClientKey,
+			Description: "client cert key for Temporal mTLS auth",
+			Optional:    true,
+			Type:        "string",
+			Sensitive:   true,
+		},
+		config.HelpKV{
+			Key:         target.TemporalQueueDir,
+			Description: queueDirComment,
+			Optional:    true,
+			Type:        "path",
+		},
+		config.HelpKV{
+			Key:         target.TemporalQueueLimit,
+			Description: queueLimitComment,
+			Optional:    true,
+			Type:        "number",
+		},
+		config.HelpKV{
+			Key:         config.Comment,
+			Description: config.DefaultComment,
+			Optional:    true,
+			Type:        "sentence",
+		},
+	}
 )

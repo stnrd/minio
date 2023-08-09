@@ -201,6 +201,11 @@ func initHelp() {
 			MultipleTargets: true,
 		},
 		config.HelpKV{
+			Key:             config.NotifyTemporalSubSys,
+			Description:     "publish bucket notifications to temporal task queues",
+			MultipleTargets: true,
+		},
+		config.HelpKV{
 			Key:             config.LambdaWebhookSubSys,
 			Description:     "manage remote lambda functions",
 			MultipleTargets: true,
@@ -255,6 +260,7 @@ func initHelp() {
 		config.NotifyRedisSubSys:    notify.HelpRedis,
 		config.NotifyWebhookSubSys:  notify.HelpWebhook,
 		config.NotifyESSubSys:       notify.HelpES,
+		config.NotifyTemporalSubSys: notify.HelpTemporal,
 		config.LambdaWebhookSubSys:  lambda.HelpWebhook,
 		config.SubnetSubSys:         subnet.HelpSubnet,
 		config.CallhomeSubSys:       callhome.HelpCallhome,

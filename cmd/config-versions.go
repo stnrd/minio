@@ -378,6 +378,7 @@ type notifierV3 struct {
 	PostgreSQL    map[string]target.PostgreSQLArgs    `json:"postgresql"`
 	Redis         map[string]target.RedisArgs         `json:"redis"`
 	Webhook       map[string]target.WebhookArgs       `json:"webhook"`
+	Temporal      map[string]target.TemporalArgs      `json:"temporal"`
 }
 
 // serverConfigV13 server configuration version '13' which is like

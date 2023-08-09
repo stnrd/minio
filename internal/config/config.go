@@ -134,6 +134,8 @@ const (
 	NotifyRedisSubSys    = madmin.NotifyRedisSubSys
 	NotifyWebhookSubSys  = madmin.NotifyWebhookSubSys
 
+	NotifyTemporalSubSys = "notify_temporal" // TODO change admin package
+
 	// Add new constants here (similar to above) if you add new fields to config.
 )
 

@@ -277,6 +277,7 @@ var (
 		config.NotifyRedisSubSys:    DefaultRedisKVS,
 		config.NotifyWebhookSubSys:  DefaultWebhookKVS,
 		config.NotifyESSubSys:       DefaultESKVS,
+		config.NotifyTemporalSubSys: DefaultTemporalKVS,
 	}
 )
 
@@ -1707,4 +1708,176 @@ func GetNotifyAMQP(amqpKVS map[string]config.KVS) (map[string]target.AMQPArgs, e
 		amqpTargets[k] = amqpArgs
 	}
 	return amqpTargets, nil
+}
+
+// DefaultTemporalKVS - Temporal KV for Temporal config.
+var (
+	DefaultTemporalKVS = config.KVS{
+		config.KV{
+			Key:   config.Enable,
+			Value: config.EnableOff,
+		},
+		config.KV{
+			Key:   target.TemporalAddress,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalPassword,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalNamespace,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalTaskQueue,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalWorkflow,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalTLS,
+			Value: config.EnableOff,
+		},
+		config.KV{
+			Key:   target.TemporalTLSSkipVerify,
+			Value: config.EnableOff,
+		},
+		config.KV{
+			Key:   target.TemporalCertAuthority,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalClientCert,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalClientKey,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalQueueDir,
+			Value: "",
+		},
+		config.KV{
+			Key:   target.TemporalQueueLimit,
+			Value: "0",
+		},
+	}
+)
+
+// GetNotifyTemporal - returns a map of registered notification 'Temporal' targets
+func GetNotifyTemporal(temporalKVS map[string]config.KVS, rootCAs *x509.CertPool) (map[string]target.TemporalArgs, error) {
+	temporalTargets := make(map[string]target.TemporalArgs)
+	for k, kv := range config.Merge(temporalKVS, target.EnvTemporalEnable, DefaultTemporalKVS) {
+		enableEnv := target.EnvTemporalEnable
+		if k != config.Default {
+			enableEnv = enableEnv + config.Default + k
+		}
+
+		enabled, err := config.ParseBool(env.Get(enableEnv, kv.Get(config.Enable)))
+		if err != nil {
+			return nil, err
+		}
+		if !enabled {
+			continue
+		}
+
+		addressEnv := target.EnvTemporalAddress
+		if k != config.Default {
+			addressEnv = addressEnv + config.Default + k
+		}
+
+		address, err := xnet.ParseHost(env.Get(addressEnv, kv.Get(target.TemporalAddress)))
+		if err != nil {
+			return nil, err
+		}
+
+		queueLimitEnv := target.EnvTemporalQueueLimit
+		if k != config.Default {
+			queueLimitEnv = queueLimitEnv + config.Default + k
+		}
+
+		queueLimit, err := strconv.ParseUint(env.Get(queueLimitEnv, kv.Get(target.TemporalQueueLimit)), 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		tlsEnv := target.EnvTemporalTLS
+		if k != config.Default {
+			tlsEnv = tlsEnv + config.Default + k
+		}
+
+		tlsSkipVerifyEnv := target.EnvTemporalTLSSkipVerify
+		if k != config.Default {
+			tlsSkipVerifyEnv = tlsSkipVerifyEnv + config.Default + k
+		}
+
+		namespaceEnv := target.EnvTemporalNamespace
+		if k != config.Default {
+			namespaceEnv = namespaceEnv + config.Default + k
+		}
+
+		taskQueueEnv := target.EnvTemporalTaskQueue
+		if k != config.Default {
+			taskQueueEnv = taskQueueEnv + config.Default + k
+		}
+
+		workflowEnv := target.EnvTemporalWorkflow
+		if k != config.Default {
+			workflowEnv = workflowEnv + config.Default + k
+		}
+
+		passwordEnv := target.EnvNATSPassword
+		if k != config.Default {
+			passwordEnv = passwordEnv + config.Default + k
+		}
+
+		queueDirEnv := target.EnvTemporalQueueDir
+		if k != config.Default {
+			queueDirEnv = queueDirEnv + config.Default + k
+		}
+
+		certAuthorityEnv := target.EnvTemporalCertAuthority
+		if k != config.Default {
+			certAuthorityEnv = certAuthorityEnv + config.Default + k
+		}
+
+		clientCertEnv := target.EnvTemporalClientCert
+		if k != config.Default {
+			clientCertEnv = clientCertEnv + config.Default + k
+		}
+
+		clientKeyEnv := target.EnvTemporalClientKey
+		if k != config.Default {
+			clientKeyEnv = clientKeyEnv + config.Default + k
+		}
+
+		temporalArgs := target.TemporalArgs{
+			Enable:        true,
+			Addr:          *address,
+			Namespace:     env.Get(namespaceEnv, kv.Get(target.TemporalNamespace)),
+			TaskQueue:     env.Get(taskQueueEnv, kv.Get(target.TemporalTaskQueue)),
+			Workflow:      env.Get(workflowEnv, kv.Get(target.TemporalWorkflow)),
+			Password:      env.Get(passwordEnv, kv.Get(target.TemporalPassword)),
+			CertAuthority: env.Get(certAuthorityEnv, kv.Get(target.TemporalCertAuthority)),
+			ClientCert:    env.Get(clientCertEnv, kv.Get(target.TemporalClientCert)),
+			ClientKey:     env.Get(clientKeyEnv, kv.Get(target.TemporalClientKey)),
+			TLS:           env.Get(tlsEnv, kv.Get(target.TemporalTLS)) == config.EnableOn,
+			TLSSkipVerify: env.Get(tlsSkipVerifyEnv, kv.Get(target.TemporalTLSSkipVerify)) == config.EnableOn,
+			QueueDir:      env.Get(queueDirEnv, kv.Get(target.TemporalQueueDir)),
+			QueueLimit:    queueLimit,
+			RootCAs:       rootCAs,
+		}
+
+		if err = temporalArgs.Validate(); err != nil {
+			return nil, err
+		}
+
+		temporalTargets[k] = temporalArgs
+	}
+
+	return temporalTargets, nil
 }
